@@ -1,0 +1,53 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+}
+
+form {
+  margin-top: 30px;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="email"] {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+button {
+  padding: 8px 16px;
+}
+
+#item-list {
+  margin-top: 20px;
+}
+
+.item-row {
+  margin-bottom: 10px;
+}
+
+.item-row::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.item-row span {
+  float: left;
+  margin-right: 10px;
+}
+
+.item-row button {
+  float: right;
+}
