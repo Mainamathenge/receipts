@@ -53,38 +53,55 @@ app.post("/generate-invoice", async (req, res) => {
     const page = await browser.newPage();
 
     // Construct the HTML content dynamically
-    let htmlContent = `
-      <html>
-        <head>
-          <link rel="stylesheet" type="text/css" href="styles.css">
-        </head>
-        <body>
-          <h1>Invoice</h1>
-          <table>
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>Price</th>
-              </tr>
-            </thead>
-            <tbody>
-    `;
+  let htmlContent = `
+    <html>
+      <head>
+        <link rel="stylesheet" type="text/css" href="styles.css">
+      </head>
+      <body>
+        <h1>Invoice</h1>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Price</th>
+              <th>Total Price (Before Tax)</th>
+            </tr>
+          </thead>
+          <tbody>
+  `;
 
-    for (let i = 0; i < items.length; i++) {
-      htmlContent += `
-        <tr>
-          <td>${items[i].item}</td>
-          <td>${items[i].price}</td>
-        </tr>
-      `;
-    }
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    const price = item.price;
+    const totalBeforeTax = price;
 
     htmlContent += `
-          </tbody>
-        </table>
-      </body>
-    </html>
+      <tr>
+        <td>${item.item}</td>
+        <td>${price}</td>
+        <td>${totalBeforeTax}</td>
+      </tr>
     `;
+  }
+
+  let totalPrice = items.reduce((acc, item) => acc + item.price, 0);
+  let totalAfterTax = totalPrice + totalPrice * 0.16;
+
+  htmlContent += `
+      <tr>
+        <td colspan="2">Total Price (Before Tax):</td>
+        <td>${totalPrice}</td>
+      </tr>
+      <tr>
+        <td colspan="2">Total Price (After Tax):</td>
+        <td>${totalAfterTax}</td>
+      </tr>
+    </tbody>
+    </table>
+  </body>
+  </html>
+  `;
 
     await page.setContent(htmlContent);
     await page.pdf({ path: "invoice.pdf", format: "A4" });
@@ -169,46 +186,6 @@ app.get("/invoice", (req, res) => {
   }).catch((error) => {
     res.status(500).send('Error generating invoice: ' + error);
   });
-
-
-      //doc.end();
-
-    // // Send the email with the PDF attachment
-    // const transporter = nodemailer.createTransport({
-    //   service: "gmail",
-    //   auth: {
-    //     user: "mathenge.joseph18@students.dkut.ac.ke",
-    //     pass: "wakaHATOLI001#",
-    //   },
-    // });
-
-    // const mailOptions = {
-    //   from: "mathenge.joseph18@students.dkut.ac.ke",
-    //   to: email,
-    //   subject: "Invoice",
-    //   text: "Please find attached the invoice PDF.",
-    //   attachments: [
-    //     {
-    //       filename: "invoice.pdf",
-    //       content: doc,
-    //     }
-    //   ],
-    // };
-
-    // transporter.sendMail(mailOptions, (error, info) => {
-    //   if (error) {
-    //     console.error("Error sending email:", error);
-    //     res.status(500).send("Error sending email");
-    //   } else {
-    //     doc.end();
-    //     console.log("Email sent:", info.response);
-    //     res.send("Invoice generated and email sent successfully");
-    //   }
-    // });
-    // })
-    // .catch((error) => {
-    //   res.status(500).send("Error generating invoice: " + error);
-    // });
     
 });
 
